@@ -1,17 +1,25 @@
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 
 plugins {
-    kotlin("multiplatform") version "1.3.30-eap-125"
+    kotlin("multiplatform") version "1.3.50"
 }
 
 repositories {
     jcenter()
     maven { setUrl("https://dl.bintray.com/kotlin/kotlin-dev") }
+    maven { setUrl("https://dl.bintray.com/kotlin/ktor") }
 }
 
 kotlin {
+/*    sourceSets {
+        val commonMain by getting
+        val ios32 by creating {
+            dependsOn(commonMain)
+        }
+    }*/
     sourceSets["commonMain"].dependencies {
         implementation(kotlin("stdlib-common"))
+        implementation("io.ktor:ktor-client-core:1.2.4")
     }
 
     val ios32 = iosArm32("ios32")
@@ -29,11 +37,12 @@ kotlin {
     }
 
     tasks.create("debugFatFramework", FatFrameworkTask::class) {
+        println("DEBUG FAT FRAMEWORK")
         baseName = frameworkName
         from(
-            ios32.binaries.getFramework("DEBUG"),
-            ios64.binaries.getFramework("DEBUG"),
-            iosSim.binaries.getFramework("DEBUG")
+                ios32.binaries.getFramework("DEBUG"),
+                ios64.binaries.getFramework("DEBUG"),
+                iosSim.binaries.getFramework("DEBUG")
         )
         destinationDir = buildDir.resolve("fat-framework/debug")
         group = "Universal framework"
@@ -44,9 +53,9 @@ kotlin {
     tasks.create("releaseFatFramework", FatFrameworkTask::class) {
         baseName = frameworkName
         from(
-            ios32.binaries.getFramework("RELEASE"),
-            ios64.binaries.getFramework("RELEASE"),
-            iosSim.binaries.getFramework("RELEASE")
+                ios32.binaries.getFramework("RELEASE"),
+                ios64.binaries.getFramework("RELEASE"),
+                iosSim.binaries.getFramework("RELEASE")
         )
         destinationDir = buildDir.resolve("fat-framework/release")
         group = "Universal framework"

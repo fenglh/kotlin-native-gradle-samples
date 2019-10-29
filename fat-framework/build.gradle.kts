@@ -10,16 +10,28 @@ repositories {
     maven { setUrl("https://dl.bintray.com/kotlin/ktor") }
 }
 
+val ktorVersion = "1.2.5"
+
 kotlin {
-/*    sourceSets {
-        val commonMain by getting
-        val ios32 by creating {
-            dependsOn(commonMain)
-        }
-    }*/
     sourceSets["commonMain"].dependencies {
         implementation(kotlin("stdlib-common"))
-        implementation("io.ktor:ktor-client-core:1.2.4")
+        implementation("io.ktor:ktor-client-core:$ktorVersion")
+    }
+
+    /*sourceSets {
+        val commonMain by getting
+        val ios32 by creating {
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+            }
+        }
+    }*/
+
+    configure(sourceSets.filter { it.name.startsWith("ios") }) {
+        dependencies {
+            implementation("io.ktor:ktor-client-ios:$ktorVersion")
+            implementation("io.ktor:ktor-client-core-native:$ktorVersion")
+        }
     }
 
     val ios32 = iosArm32("ios32")
